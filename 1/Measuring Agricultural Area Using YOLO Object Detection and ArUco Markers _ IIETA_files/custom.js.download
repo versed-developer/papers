@@ -1,0 +1,512 @@
+(function (Drupal, $, window) {
+  Drupal.behaviors.frontTitle = {
+    attach: function (context, settings) {
+      $(function () {
+        $(".front .view-mt-events .views-row").each(function (i) {
+          var divH = $(this).find(".views-field-title").height();
+          var $p = $("a", $(this).find(".views-field-title")).eq(0);
+          while ($p.outerHeight() > divH) {
+            $p.text($p.text().replace(/(\s)*([a-zA-Z0-9]+|\W)(\.\.\.)?$/, "..."));
+          }
+          ;
+        });
+      })
+
+    }
+  };
+  Drupal.behaviors.right = {
+    attach: function (context, settings) {
+      $(function () {
+        var speed = 1000;
+        var box = $("#right_entrance");
+        var icon = box.find(" .fa-chevron-right");
+        var boxContent = box.find(".right_entrance_content");
+        var boxContentIn = boxContent.children(" .region-right-entrance");
+        var boxEndWidth = 45;
+        var boxStartWidth = box.width();
+        var boxEndHeight = 45;
+        var boxStartHeight = box.height();
+
+        var iSwitch = 0;
+
+        function setiSwitch() {
+          setTimeout(function () {
+            iSwitch = 0;
+          }, speed + (speed / 2));
+        }
+
+        icon.click(function () {
+          if (iSwitch == 0) {
+            iSwitch = 1;
+
+            if (box.width() == boxStartWidth) {
+              box.animate({
+                "width": boxEndWidth + "px"
+              }, speed);
+              boxContentIn.animate({
+                "right": -boxContent.width(),
+              }, speed)
+              setTimeout(function () {
+                box.animate({
+                  "height": boxEndHeight + 'px'
+                }, speed / 2);
+
+              }, speed);
+              setiSwitch();
+              $(this).addClass("transform");
+            } else {
+              setTimeout(function () {
+                box.animate({
+                  "width": boxStartWidth + 'px'
+                }, speed);
+                boxContentIn.animate({
+                  "right": "0px",
+                }, speed);
+              }, speed / 2);
+              box.animate({
+                "height": boxStartHeight + 'px'
+              }, speed / 2);
+              setiSwitch();
+              $(this).removeClass("transform");
+            }
+          } else {
+            return;
+          }
+
+        });
+      });
+    }
+  };
+  Drupal.behaviors.setting = {
+    attach: function (context, settings) {
+
+      $('body').click(function (event) {
+        var target = $(event.target);
+        if (!target.hasClass('popover') &&
+          !target.hasClass('pop') &&
+          !target.hasClass('popover-content') &&
+          !target.hasClass('popover-title') &&
+          !target.hasClass('arrow') &&
+          target.data("toggle") !== "popover") {
+          $('[data-toggle="popover"]').popover('hide');
+        }
+      }); /**/
+      $(context).find('a[data-toggle="popover"]').each(function () {
+        var pop_obj = $(this).popover({
+          trigger: 'click'
+        });
+        /*
+          $(this).tooltip({
+		    trigger:'click',
+			template:'<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+		  });
+		 */
+        $(this).click(function (e) {
+          e.preventDefault();
+        });
+        $(document).on("click", '.popover-content .btn', function (e) {
+
+          var content = $(this).parent().parent().contents().filter(function () {
+            return this.nodeType == 3;
+          }).text();
+
+          var $tempInput = $("<textarea>");
+          $("body").append($tempInput);
+          $tempInput.val(content).select();
+          document.execCommand("copy");
+          $tempInput.remove();
+          //复制完关闭
+          //pop_obj.popover('hide');
+          //console.log('popover-content .btn clicked123:' + content);
+        });
+        /*
+        		$('.popover-content .btn').click(function(e) {
+                    console.log('popover-content .btn clicked');
+        				//e.preventDefault();
+        			});
+        			*/
+
+      });
+      $(function () {
+        /*
+          $('.paper-link-citation a[data-toggle="tooltip"]').tooltip({
+		    trigger:'click',
+			template:'<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div><div class="copybtn"></div></div>'
+		  });  */
+        //      $('.page-node #page > #main-content >.container >.row>section').attr("class","col-md-9");
+		$('#block-block-32 .content p a').html($('#block-block-32 .content .media-element-container .file-image .content').html());
+    $('#block-block-32 .content .media-element-container .file-image .content').hide();
+    $('#block-block-163 .content p a').html($('#block-block-163 .content .media-element-container .file-image .content').html());
+    $('#block-block-163 .content .media-element-container .file-image .content').hide();
+    if ($('#block-block-163').length >=1){
+      $('#block-block-32').remove();
+    }
+
+      });
+    }
+  };
+  Drupal.behaviors.journalsAbout = {
+    attach: function (context, settings) {
+      $(function () {
+        var bodyHeight = $(".node-type-mt-course #block-system-main .node-main-content > .content .field-name-body").height();
+        if (bodyHeight > '400') {
+          $(".node-type-mt-course #block-system-main .node-main-content > .content .field-name-body").css({
+            'height': '400px',
+            'overflow': 'hidden'
+          });
+          $(".node-type-mt-course #block-system-main .node-main-content > .content .field-name-body").after('<div class="body_more"><span>Read More</span></div><div class="body_back"><span>Back</span></div>');
+        }
+        $(".body_more").click(function () {
+          $(".node-type-mt-course #block-system-main .node-main-content > .content .field-name-body").css('height', 'auto');
+          $(this).css('display', 'none');
+          $(".body_back").css('display', 'block');
+        });
+        $(".body_back").click(function () {
+          $(".node-type-mt-course #block-system-main .node-main-content > .content .field-name-body").css({
+            'height': '400px',
+            'overflow': 'hidden'
+          });
+          $(this).css('display', 'none');
+          $(".body_more").css('display', 'block');
+        });
+
+        $(".field-name-field-ad .carousel-inner .item").each(function (index, element) {
+          var url = $(".field-name-field-ad-link>.field-items>.field-item>a").eq(index).attr('href');
+          $(".field-name-field-ad .carousel-inner .item>a").eq(index).attr('href', url);
+        });
+        //var adimg = $(".field-name-field-ad>.field-items>.field-item").html();
+        //$(".field-name-field-ad-link>.field-items>.field-item>a").html(adimg);
+        var $bannerUl = $('.field-name-field-ad-link>.field-items'),
+          $bannerLi = $('.field-name-field-ad-link>.field-items>.field-item');
+        $bannerUl.css('width', $bannerLi.width() * $bannerLi.length);
+        setInterval(function () {
+          $bannerUl.animate({
+            'marginLeft': -$bannerLi.width()
+          }, 500, function () {
+            $(this).animate({
+              'marginLeft': 0
+            }, 0)
+              .find('li').eq(0).appendTo($(this));
+          });
+        }, 5000);
+
+      })
+
+    }
+  };
+  Drupal.behaviors.journalPaper = {
+    attach: function (context, settings) {
+      $(function () {
+        $(".node-type-journal-paper #block-system-main .paper-download .download-file a").html('<img src="/sites/all/themes/mytheme/images/download.png">');
+        var html = $(".node-type-journal-paper #block-system-main .paper-download .download-file a").html();
+
+        $('.sub_title span').each(function (i) {
+          $(this).click(function () {
+            $(this).parent().parent().toggleClass("expanded");
+          })
+        });
+
+
+      })
+
+    }
+  };
+  Drupal.behaviors.instructionAuthors = {
+    attach: function (context, settings) {
+      $(function () {
+
+        $(".node-type-instruction-for-authors #block-system-main .content>div.field-name-field-template-download .file a").html('Template download');
+
+
+        //var guidelineslabel = $(".node-type-instruction-for-authors .field-name-field-author-guidelines>.field-label").html();
+        //guidelineslabel = guidelineslabel.substr(0, guidelineslabel.length - 7);
+        //$(".node-type-instruction-for-authors .field-name-field-author-guidelines>.field-label").html(guidelineslabel);
+
+        var lengthlabel = $(".node-type-instruction-for-authors .field-name-field-paper-length>.field-label").html();
+        if (lengthlabel) lengthlabel = lengthlabel.substr(0, lengthlabel.length - 7);
+        $(".node-type-instruction-for-authors .field-name-field-paper-length>.field-label").html(lengthlabel);
+
+        var titlelabel = $(".node-type-instruction-for-authors .field-name-field-pater-title-and-authors>.field-label").html();
+        if (titlelabel) titlelabel = titlelabel.substr(0, titlelabel.length - 7);
+        $(".node-type-instruction-for-authors .field-name-field-pater-title-and-authors>.field-label").html(titlelabel);
+
+        var abstractlabel = $(".node-type-instruction-for-authors .field-name-field-authors-abstract>.field-label").html();
+        if (abstractlabel) abstractlabel = abstractlabel.substr(0, abstractlabel.length - 7);
+        $(".node-type-instruction-for-authors .field-name-field-authors-abstract>.field-label").html(abstractlabel);
+
+        var introductionlabel = $(".node-type-instruction-for-authors .field-name-field-introduction>.field-label").html();
+        if (introductionlabel) introductionlabel = introductionlabel.substr(0, introductionlabel.length - 7);
+        $(".node-type-instruction-for-authors .field-name-field-introduction>.field-label").html(introductionlabel);
+
+        var materialslabel = $(".node-type-instruction-for-authors .field-name-field-materials-and-methods>.field-label").html();
+        if (materialslabel) materialslabel = materialslabel.substr(0, materialslabel.length - 7);
+        $(".node-type-instruction-for-authors .field-name-field-materials-and-methods>.field-label").html(materialslabel);
+
+        var resultslabel = $(".node-type-instruction-for-authors .field-name-field-results-and-discussion>.field-label").html();
+        if (resultslabel) resultslabel = resultslabel.substr(0, resultslabel.length - 7);
+        $(".node-type-instruction-for-authors .field-name-field-results-and-discussion>.field-label").html(resultslabel);
+
+        var equationslabel = $(".node-type-instruction-for-authors .field-name-field-equations-units>.field-label").html();
+        if (equationslabel) equationslabel = equationslabel.substr(0, equationslabel.length - 7);
+        $(".node-type-instruction-for-authors .field-name-field-equations-units>.field-label").html(equationslabel);
+
+        var tableslabel = $(".node-type-instruction-for-authors .field-name-field-tables-and-figures>.field-label").html();
+        if (tableslabel) tableslabel = tableslabel.substr(0, tableslabel.length - 7);
+        $(".node-type-instruction-for-authors .field-name-field-tables-and-figures>.field-label").html(tableslabel);
+
+        var conclusionslabel = $(".node-type-instruction-for-authors .field-name-field-conclusions>.field-label").html();
+        if (conclusionslabel) conclusionslabel = conclusionslabel.substr(0, conclusionslabel.length - 7);
+        $(".node-type-instruction-for-authors .field-name-field-conclusions>.field-label").html(conclusionslabel);
+
+        var referenceslabel = $(".node-type-instruction-for-authors .field-name-field-authors-references>.field-label").html();
+        if (referenceslabel) referenceslabel = referenceslabel.substr(0, referenceslabel.length - 7);
+        $(".node-type-instruction-for-authors .field-name-field-authors-references>.field-label").html(referenceslabel);
+
+        var peerlabel = $(".node-type-instruction-for-authors .field-name-field-peer-review-process>.field-label").html();
+        if (peerlabel) peerlabel = peerlabel.substr(0, peerlabel.length - 7);
+        $(".node-type-instruction-for-authors .field-name-field-peer-review-process>.field-label").html(peerlabel);
+
+        var copyrightlabel = $(".node-type-instruction-for-authors .field-name-field-copyright-information>.field-label").html();
+        if (copyrightlabel) copyrightlabel = copyrightlabel.substr(0, copyrightlabel.length - 7);
+        $(".node-type-instruction-for-authors .field-name-field-copyright-information>.field-label").html(copyrightlabel);
+
+        var feeslabel = $(".node-type-instruction-for-authors .field-name-field-charges-and-fees>.field-label").html();
+        if (feeslabel) feeslabel = feeslabel.substr(0, feeslabel.length - 7);
+        $(".node-type-instruction-for-authors .field-name-field-charges-and-fees>.field-label").html(feeslabel);
+
+      })
+
+    }
+  };
+
+  Drupal.behaviors.authorPopupWindow = {
+    attach: function (context, settings) {
+      $(function () {
+        if ($(".paper-author .popupWindowFrom").length > 0) {
+          var div = $('.field-name-field-affiliation .tex2jax'); //获取你想要的DIV
+          var y1 = div.offset().top; //div上面两个的点的y值
+          var y2 = y1 + div.outerHeight(); //div下面两个点的y值
+          var x1 = div.offset().left; //div左边两个的点的x值
+          var x2 = x1 + div.outerWidth(); //div右边两个点的x的值
+
+          var x = 0;
+          var y = 0;
+
+          $(document).mousemove(function (e) {
+            x = e.pageX;
+            y = e.pageY;
+
+
+            //x的值相对于文档的左边缘。y的值相对于文档的上边缘
+            //x,y是全局变量;
+            //判断鼠标是否在某DIV中
+            var popupWindowFromHeight = $('.popupWindowFrom').outerHeight();
+            var newY1 = y1 - popupWindowFromHeight;
+            if (x < x1 || x > x2 || y < newY1 || y > y2) {
+              $('.field-name-field-affiliation .tex2jax').hide();
+            }
+          });
+          $(".popupWindowFrom").each(function (i) {
+            //$('.field-name-field-affiliation .tex2jax').hide();
+            $(this).mouseover(function () {
+              if(window.location.href == "https://www.iieta.org/journals/ts/paper/10.18280/ts.410335" || window.location.href == "https://www.iieta.org/journals/ts/paper/10.18280/ts.410335"){
+                if ($(this).attr('idval').includes(',')) {
+                  var popupWindowIds = $(this).attr('idval').split(',');
+                } else if ($(this).attr('idval').includes(' ')) {
+                  var popupWindowIds = $(this).attr('idval').split(' ');
+                } else {
+                  var popupWindowIds = [$(this).attr('idval')];
+                }
+                var windowItemSize = $('[id^=popupWindow]').size();
+                for (var i = 1; i <= windowItemSize; i++) {
+                  if (popupWindowIds.indexOf(i.toString()) !== -1) {
+                    $('#popupWindow' + i).show();
+                  } else {
+                    $('#popupWindow' + i).hide();
+                  }
+                }
+              } else {
+                // var popupWindowIds = $(this).attr('idval');
+                // var windowItemSize = $("[id^=popupWindow]").size();
+                // console.log(popupWindowIds);
+                // // for (var i = 1; i <= windowItemSize; i++) {
+                //   if (popupWindowIds.indexOf(i) >= 0) {
+                //     $('#popupWindow' + i).show();
+                //   } else {
+                //     $('#popupWindow' + i).hide();
+                //   }
+                // }
+                if ($(this).attr('idval').includes(',')) {
+                  var popupWindowIds = $(this).attr('idval').split(',');
+                } else if ($(this).attr('idval').includes(' ')) {
+                  var popupWindowIds = $(this).attr('idval').split(' ');
+                } else {
+                  var popupWindowIds = [$(this).attr('idval')];
+                }
+                var windowItemSize = $('[id^=popupWindow]').size();
+                for (var i = 1; i <= windowItemSize; i++) {
+                  if (popupWindowIds.indexOf(i.toString()) !== -1) {
+                    $('#popupWindow' + i).show();
+                  } else {
+                    $('#popupWindow' + i).hide();
+                  }
+                }
+              }
+
+              var leftValue = $(this).position().left;
+              var topValue = $(this).position().top + 30;
+              $('.field-name-field-affiliation .tex2jax').css('left', leftValue + "px");
+              $('.field-name-field-affiliation .tex2jax').css('top', topValue + "px")
+              $('.field-name-field-affiliation .tex2jax').show();
+              y1 = div.offset().top; //div上面两个的点的y值
+              y2 = y1 + div.outerHeight(); //div下面两个点的y值
+              x1 = div.offset().left; //div左边两个的点的x值
+              x2 = x1 + div.outerWidth(); //div右边两个点的x的值
+            });
+
+            $(this).click(function () {
+              if ($(this).attr('idval').includes(',')) {
+                var popupWindowIds = $(this).attr('idval').split(',');
+              } else {
+                var popupWindowIds = $(this).attr('idval').split(' ');
+              }
+              var windowItemSize = $('[id^=popupWindow]').size();
+              for (var i = 1; i <= windowItemSize; i++) {
+                if (popupWindowIds.indexOf(i.toString()) !== -1) {
+                  $('#popupWindow' + i).show();
+                } else {
+                  $('#popupWindow' + i).hide();
+                }
+              }
+              var leftValue = $(this).position().left;
+              var topValue = $(this).position().top + 30;
+              $('.field-name-field-affiliation .tex2jax').css('left', leftValue + "px")
+              $('.field-name-field-affiliation .tex2jax').css('top', topValue + "px")
+              $('.field-name-field-affiliation .tex2jax').toggle();
+            });
+
+          });
+        }
+      })
+    }
+  };
+
+  Drupal.behaviors.journalsSelector = {
+    attach: function (context, settings) {
+      $(function () {
+        if ($("#browse_journal").length > 0) {
+          $('#browse_journal > option:first').hide();
+        }
+        if ($("#selection_criteria").length > 0) {
+          $('#selection_criteria').attr('disabled', 'disabled');
+          $('#selection_criteria > option:first').hide();
+        }
+      })
+    }
+  };
+
+  Drupal.behaviors.editorTable = {
+    attach: function (context, settings) {
+      $(function () {
+        if ($(".editor_table").length > 0) {
+          $('.editor_table br').each(function () {
+            $(this).next("br").remove();
+          });
+        }
+      })
+    }
+  };
+
+  Drupal.behaviors.volSwitcher = {
+    attach: function (context, settings) {
+      $(function () {
+        if ($(".papers-filter-volume .volume").length > 0) {
+          var GtCounter = 0;
+          var parentBottom = $(".papers-filter-volume .volume").offset().top + 49;
+          var unitCount = 0;
+          var hasArrow = 0;
+          $(".papers-filter-volume .volume .volume-li").each(function () {
+            if ($(this).offset().top < parentBottom) {
+              unitCount++;
+            } else {
+              hasArrow = 1;
+            }
+          });
+          if (hasArrow === 1) {
+            var volLiLen = $('.papers-filter-volume .volume .volume-li').length;
+            $('.papers-filter-volume .volume').prepend('<span class="issue-vol-span issue-vol-lt"></span><span class="issue-vol-span issue-vol-gt"></span>');
+            var MaxGtCount = Math.floor(volLiLen / unitCount);
+            $(".papers-filter-volume .issue-vol-gt").click(function () {
+              if (GtCounter < MaxGtCount) {
+                GtCounter = GtCounter + 1;
+                var volIndex = (GtCounter - 1) * unitCount;
+                for (volIndex; volIndex < GtCounter * unitCount; volIndex++) {
+                  $(".volume").find(".volume-li:eq(" + volIndex + ")").hide();
+                }
+              }
+            });
+            $(".papers-filter-volume .issue-vol-lt").click(function () {
+              if (GtCounter > 0) {
+                var volIndex = (GtCounter - 1) * unitCount;
+                for (volIndex; volIndex < GtCounter * unitCount; volIndex++) {
+                  $(".volume").find(".volume-li:eq(" + volIndex + ")").show();
+                }
+                GtCounter = GtCounter - 1;
+              }
+            });
+          }
+        }
+      })
+    }
+  };
+
+  Drupal.behaviors.issueSwitcher = {
+    attach: function (context, settings) {
+      $(function () {
+        if ($(".papers-filter-issues").length > 0) {
+          function issueSwitcher() {
+            var iGtCounter = 0;
+            var iparentTop = $(".papers-filter-issues li:first").offset().top;
+            var iunitCount = 0;
+            var ihasArrow = 0;
+            $(".papers-filter-issues li").each(function () {
+              if ($(this).offset().top === iparentTop) {
+                iunitCount++;
+              } else {
+                ihasArrow = 1;
+              }
+            });
+            if (ihasArrow === 1) {
+              var ivolLiLen = $('.papers-filter-issues li').length;
+              $('.papers-filter-issues ul').prepend('<span class="issue-number-span issue-number-lt"></span><span class="issue-number-span issue-number-gt"></span>');
+              var iMaxGtCount = Math.floor(ivolLiLen / iunitCount);
+              $(".papers-filter-issues .issue-number-gt").click(function () {
+                if (iGtCounter < iMaxGtCount) {
+                  iGtCounter = iGtCounter + 1;
+                  var ivolIndex = (iGtCounter - 1) * iunitCount;
+                  for (ivolIndex; ivolIndex < iGtCounter * iunitCount; ivolIndex++) {
+                    $(".papers-filter-issues ul").find("li:eq(" + ivolIndex + ")").hide();
+                  }
+                }
+              });
+              $(".papers-filter-issues .issue-number-lt").click(function () {
+                if (iGtCounter > 0) {
+                  var ivolIndex = (iGtCounter - 1) * iunitCount;
+                  for (ivolIndex; ivolIndex < iGtCounter * iunitCount; ivolIndex++) {
+                    $(".papers-filter-issues ul").find("li:eq(" + ivolIndex + ")").show();
+                  }
+                  iGtCounter = iGtCounter - 1;
+                }
+              });
+            }
+          }
+
+          issueSwitcher();
+          $(".papers-filter-volume .volume .volume-li").click(function () {
+            issueSwitcher();
+          });
+        }
+      })
+    }
+  };
+}(Drupal, jQuery, this));
